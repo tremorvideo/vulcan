@@ -18,6 +18,7 @@ import java.nio.file.Path;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
+import org.apache.avro.file.CodecFactory;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericDatumReader;
@@ -65,6 +66,7 @@ public class AvroEventConsumerTest extends ConfiguredUnitTest {
 
   private File testAvroFile;
   private Path testAvroPath;
+  private CodecFactory codec = CodecFactory.nullCodec();
 
   @Rule
   public TemporaryFolder testDirectory = new TemporaryFolder();
@@ -75,7 +77,7 @@ public class AvroEventConsumerTest extends ConfiguredUnitTest {
     initMocks();
     wireUpMocks();
 
-    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock);
+    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock, codec);
   }
 
   private void initTestData() throws IOException {
@@ -221,12 +223,12 @@ public class AvroEventConsumerTest extends ConfiguredUnitTest {
   }
 
   private void givenDestinationFileExists() {
-    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock);
+    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock, codec);
   }
 
   private void givenDestinationFileDoesNotExist() {
     initTestAvroFileTo(new File(testDirectory.getRoot(), "I am nothing" + System.currentTimeMillis()));
-    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock);
+    avroEventConsumerUnderTest = new AvroEventConsumer(testAvroPath, avroSchemaMock, rollingPolicyMock, codec);
   }
 
   private void givenSchemasDiffer() {

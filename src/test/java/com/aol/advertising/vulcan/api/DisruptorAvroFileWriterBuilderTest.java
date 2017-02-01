@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.avro.Schema;
+import org.apache.avro.file.CodecFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -346,14 +347,14 @@ public class DisruptorAvroFileWriterBuilderTest extends ConfiguredUnitTest {
   
   @SuppressWarnings("unchecked")
   private void thenConfiguredDestinationFileIsUsedInTheFinalWriterObject() throws Exception {
-    verifyNew(AvroEventConsumer.class).withArguments(eq(avroFileNameMock), any(Schema.class), any(RollingPolicy.class));
+    verifyNew(AvroEventConsumer.class).withArguments(eq(avroFileNameMock), any(Schema.class), any(RollingPolicy.class), any(CodecFactory.class));
     verify(disruptorMock).handleEventsWith(avroEventConsumerMock);
     verify(avroEventPublisherMock).startPublisherUsing(disruptorMock);
   }
   
   @SuppressWarnings("unchecked")
   private void thenConfiguredSchemaIsUsedInTheFinalWriterObject() throws Exception {
-    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), eq(avroSchemaMock), any(RollingPolicy.class));
+    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), eq(avroSchemaMock), any(RollingPolicy.class), any(CodecFactory.class));
     verify(disruptorMock).handleEventsWith(avroEventConsumerMock);
     verify(avroEventPublisherMock).startPublisherUsing(disruptorMock);
   }
@@ -366,7 +367,7 @@ public class DisruptorAvroFileWriterBuilderTest extends ConfiguredUnitTest {
   
   @SuppressWarnings("unchecked")
   private void verifyRollingPolicyDefaults() throws Exception {
-    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(timeAndSizeBasedRollingPolicyMock));
+    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(timeAndSizeBasedRollingPolicyMock), any(CodecFactory.class));
     verify(disruptorMock).handleEventsWith(avroEventConsumerMock);
   }
   
@@ -394,13 +395,13 @@ public class DisruptorAvroFileWriterBuilderTest extends ConfiguredUnitTest {
   }
 
   private void thenConfiguredRollingPolicyIsUsedInTheFinalWriterObject() throws Exception {
-    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(rollingPolicyMock));
+    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(rollingPolicyMock), any(CodecFactory.class));
     verifyWriterIsStartedWithConfiguredObjects();
   }
 
   private void thenTheConfigurationForTheDefaultPolicyIsUsedWhenBuildingTheWriterObject() throws Exception {
     verifyNew(TimeAndSizeBasedRollingPolicy.class).withArguments(ROLLING_POLICY_CONFIGURATION);
-    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(configuredTimeAndSizeBasedRollingPolicyMock));
+    verifyNew(AvroEventConsumer.class).withArguments(any(Path.class), any(Schema.class), eq(configuredTimeAndSizeBasedRollingPolicyMock), any(CodecFactory.class));
     verifyWriterIsStartedWithConfiguredObjects();
   }
 

@@ -7,6 +7,7 @@ import com.aol.advertising.vulcan.api.rolling.RollingPolicy;
 import com.aol.advertising.vulcan.rolling.TimeAndSizeBasedRollingPolicyConfig;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.apache.avro.file.CodecFactory;
 
 /**
  * Factory API to create new instances of {@link AvroWriter}. This API is suitable for applications
@@ -25,6 +26,7 @@ public class AvroWriterFactory {
   private WaitStrategy waitStrategy;
   private RollingPolicy rollingPolicy;
   private TimeAndSizeBasedRollingPolicyConfig defaultRollingPolicyConfiguration;
+  private CodecFactory codec;
   
   public AvroWriter createNewWriter() {
     OptionalSteps writerBuilder = AvroWriterBuilder.startCreatingANewWriter()
@@ -44,6 +46,9 @@ public class AvroWriterFactory {
     }
     if (rollingPolicy != null) {
       writerBuilder.withRollingPolicy(rollingPolicy);
+    }
+    if (codec != null) {
+      writerBuilder.withCodec(codec);
     }
     return writerBuilder.createNewWriter();
   }
@@ -75,5 +80,9 @@ public class AvroWriterFactory {
 
   public void setRollingPolicy(RollingPolicy rollingPolicy) {
     this.rollingPolicy = rollingPolicy;
+  }
+
+  public void setCodec(CodecFactory codec) {
+    this.codec = codec;
   }
 }

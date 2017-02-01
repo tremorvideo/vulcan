@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
+import org.apache.avro.file.CodecFactory;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericDatumReader;
@@ -26,13 +27,15 @@ public class AvroEventConsumer implements EventHandler<AvroEvent>, LifecycleAwar
   private final Schema avroSchema;
   private final RollingPolicy rollingPolicy;
   private final SpecificDatumWriter<SpecificRecord> datumWriter;
+  private final CodecFactory codec;
 
   private DataFileWriter<SpecificRecord> avroFileWriter;
 
-  public AvroEventConsumer(Path avroFilename, Schema avroSchema, RollingPolicy rollingPolicy) {
+  public AvroEventConsumer(Path avroFilename, Schema avroSchema, RollingPolicy rollingPolicy, CodecFactory codec) {
     this.avroFilename = avroFilename;
     this.avroSchema = avroSchema;
     this.rollingPolicy = rollingPolicy;
+    this.codec = codec;
     this.datumWriter = new SpecificDatumWriter<>(avroSchema);
   }
 
@@ -76,6 +79,7 @@ public class AvroEventConsumer implements EventHandler<AvroEvent>, LifecycleAwar
   private void getNewFileWriter() {
     avroFileWriter = new DataFileWriter<>(datumWriter);
     avroFileWriter.setSyncInterval(TWO_MB_IN_BYTES);
+    avroFileWriter.setCodec(codec);
   }
 
   private void bindWriterToAvroFile() throws IOException {

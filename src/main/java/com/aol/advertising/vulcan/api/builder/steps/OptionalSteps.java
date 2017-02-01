@@ -7,6 +7,7 @@ import com.aol.advertising.vulcan.rolling.TimeAndSizeBasedRollingPolicyConfig;
 import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.apache.avro.file.CodecFactory;
 
 /**
  * @author Jaime Nuche
@@ -52,6 +53,8 @@ public interface OptionalSteps {
    * Configures the default rolling policy with {@code configuration}
    */
   OptionalSteps withDefaultRollingPolicyConfiguration(TimeAndSizeBasedRollingPolicyConfig configuration);
+
+  OptionalSteps withCodec(CodecFactory codec);
 
   /**
    * Finish configuration and create a new {@link AvroWriter} instance

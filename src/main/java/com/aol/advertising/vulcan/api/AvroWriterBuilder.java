@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.avro.Schema;
+import org.apache.avro.file.CodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ public class AvroWriterBuilder implements Steps {
   private ProducerType producerType;
   private WaitStrategy waitStrategy;
   private RollingPolicy rollingPolicy;
+  private CodecFactory codec;
 
   private AvroWriterBuilder() {
     publisherUnderConstruction = new AvroEventPublisher();
@@ -193,6 +195,16 @@ public class AvroWriterBuilder implements Steps {
   }
 
   @Override
+  public OptionalSteps withCodec(CodecFactory codec) {
+    if (codec != null) {
+      this.codec = codec;
+    } else {
+      log.warn("Tried to configure the codec with a null value");
+    }
+    return this;
+  }
+
+  @Override
   public AvroWriter createNewWriter() {
     rollingPolicy.registerAvroFilename(avroFilename);
     publisherUnderConstruction.registerConsumerExecutorForShutdown(consumerExecutor);
@@ -208,7 +220,7 @@ public class AvroWriterBuilder implements Steps {
                                                      producerType,
                                                      waitStrategy);
     disruptor.handleExceptionsWith(new DisruptorExceptionHandler());
-    disruptor.handleEventsWith(new AvroEventConsumer(avroFilename, avroSchema, rollingPolicy));
+    disruptor.handleEventsWith(new AvroEventConsumer(avroFilename, avroSchema, rollingPolicy, codec));
     return disruptor;
   }
 }
