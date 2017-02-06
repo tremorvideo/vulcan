@@ -4,7 +4,7 @@
 
   <groupId>com.aol.advertising.vulcan</groupId>
   <artifactId>disruptor_avro_writer</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.0</version>
   <name>Vulcan Writer</name>
   <description>Disruptor-based Avro file writer</description>
   <url>https://github.com/aol/vulcan</url>
